@@ -11,7 +11,7 @@ const getURLImage = (page) => {
 };
 
 async function downloadImage(url, page) {
-  const stream = path.resolve(__dirname, 'images', `${page}.jpg`);
+  const stream = path.resolve(__dirname, 'images', `${page + 1}.jpg`);
   const writer = fs.createWriteStream(stream);
 
   const response = await axios({
@@ -25,7 +25,7 @@ async function downloadImage(url, page) {
   return new Promise((resolve, reject) => {
     writer.on('finish', () => {
       resolve();
-      console.log(`✅ Done: Page ${page}`);
+      console.log(`✅ Done: Page ${page + 1}`);
     });
     writer.on('error', () => {
       reject();
