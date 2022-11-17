@@ -29,7 +29,7 @@ async function downloadImage(url, page) {
     });
     writer.on('error', () => {
       reject();
-      console.log(` Error`);
+      console.log(`❌ Error`);
     });
   });
 }
