@@ -7,12 +7,15 @@ const END_PAGE = 143;
 
 const getURLImage = (page) => {
   // https://drive.google.com/viewer2/.................
-  return `https://drive.google.com/viewer2/prod-03/img?ck=drive&ds=APznzaZIJTMUWoAv_l3stU8ba6V5G_tt7Avm2DQNDXw0yyjRDqRSMofDW0qIwIXRl5M71y8M6tYb1vVlgOs-5aOadsTzq-IEi0i2eL_u0ibPSh_-NBR1VRiqek90AiK9tOO84ks-5zjQ0a_-yK22-3DtDVeVWvAxj5kcPSm-GKPdQ-fxZo8WNSdObgRW__rx6s9rla9iUXdxvGD1dog4wJjg232YDkPmlD8OJqA8J2143NaVBRlm-V-2ZBr2L_tmWWTHmY2IR-wPvwNVwuOim6MBfZkXlL8tyxfRcOUPQEqqG5KOtYQgKuZNtp7LXqe3Ny2s81YngbuzF1xT4lGL_PoR2aJIHcz-ZtD6jmutKGQ1NK_HWMS4WLhChyNBdVZss8LKvlNPK6xr&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
+  return `https://drive.google.com/viewer2/prod-03/img?ck=drive&ds=APznzabC8bFIK9vHuZdEC8SXeewD46oASpqTzrxEU9tyYKWrZURFEYit8mTQ_h1-bQVe9dycrenoGT4yQ398ANU6WG5uk0tAaBo47Q7jpvPiG_ksvI23RLfk3Pe4RKQELtmPEc5QKqPdiFUFw5cJIwPjMhOKRx2thK8xYTKpxqzOvmHu9cNetWxxkLqoUyooU0jst-32Tn0C44sWt-G_GAQxitaUp-tcLVFkowCcIx3M-Dli6yP6evOwLwsylsqHA-uGKV6q0smmIHpgUpkl9zeAYh1M1ysBuAE46zfGlb0ZHA6X5tl3XG99VykXEv_zKgPXAxUUolvansXjvpsKTB7n57pE5PY6d3Q4h84z_w6yes9-KbPH8BZU1P8oWx30DGrmLLF6htQz&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
 };
 
-async function downloadImage(url, page) {
-  const stream = path.resolve(__dirname, 'images', `${page + 1}.jpg`);
-  const writer = fs.createWriteStream(stream);
+async function downloadImage(number) {
+  const page = number + 1;
+  const imagePath = path.resolve(__dirname, 'images', `${page}.jpg`);
+  const writer = fs.createWriteStream(imagePath);
+
+  const url = getURLImage(number);
 
   const response = await axios({
     url,
@@ -25,7 +28,7 @@ async function downloadImage(url, page) {
   return new Promise((resolve, reject) => {
     writer.on('finish', () => {
       resolve();
-      console.log(`✅ Done: Page ${page + 1}`);
+      console.log(`✅ Done: Page ${page}`);
     });
     writer.on('error', () => {
       reject();
@@ -36,8 +39,7 @@ async function downloadImage(url, page) {
 
 const run = async () => {
   for (let i = START_PAGE; i < END_PAGE; i++) {
-    const url = getURLImage(i);
-    await downloadImage(url, i);
+    await downloadImage(i);
   }
 };
 
