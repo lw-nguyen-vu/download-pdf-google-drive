@@ -1,33 +1,34 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const imgToPDF = require('image-to-pdf');
 
+const FILE_NAME = 'CRYPTO DECADE';
 const START_PAGE = 0;
 const END_PAGE = 143;
 
 const getURLImage = (page) => {
-  // https://drive.google.com/viewer2/.................
-  return `https://drive.google.com/viewer2/prod-03/img?ck=drive&ds=APznzabC8bFIK9vHuZdEC8SXeewD46oASpqTzrxEU9tyYKWrZURFEYit8mTQ_h1-bQVe9dycrenoGT4yQ398ANU6WG5uk0tAaBo47Q7jpvPiG_ksvI23RLfk3Pe4RKQELtmPEc5QKqPdiFUFw5cJIwPjMhOKRx2thK8xYTKpxqzOvmHu9cNetWxxkLqoUyooU0jst-32Tn0C44sWt-G_GAQxitaUp-tcLVFkowCcIx3M-Dli6yP6evOwLwsylsqHA-uGKV6q0smmIHpgUpkl9zeAYh1M1ysBuAE46zfGlb0ZHA6X5tl3XG99VykXEv_zKgPXAxUUolvansXjvpsKTB7n57pE5PY6d3Q4h84z_w6yes9-KbPH8BZU1P8oWx30DGrmLLF6htQz&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
+  return `https://drive.google.com/viewer2/prod-03/img?ck=drive&ds=APznzaZnVVcaDA4bkRVuFvF4j1xw79ST5ak-xbtCIDENnDyuxgFtnv0ODiNvfvhn08A5el6rqFb28b9kF4OQT5YPnEmPUhgC9zHuE3hqIjCHHmOhZPHzPJvcnrWM1aFmGoZsDMSk2FMOMv3y6Srj4oE3y59qmwBAbkI8fdT74H76MmGYkGZRXM_yd8tC-VBapumi0_sJmO3zdWo9i0uOx--yeRd4_DzsY1gF5Giw2NcWw_U5zUX3H5BeOozZGJZtx9e4i9r1y3yOsZwokkmdd-13TAiSwLclgfz4rNnkXTkpilwz-ymSkUuIigV3IvN6q5vFpbX9ZpUitcKliBXwK1hOYs2KquV63MCl7dnBlvykgjQgd9kxkO8RFuc9kSYkyunKnYrxJO36&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
 };
 
-async function downloadImage(number) {
+const downloadImage = async (number) => {
   const page = number + 1;
   const imagePath = path.resolve(__dirname, 'images', `${page}.jpg`);
   const writer = fs.createWriteStream(imagePath);
 
   const url = getURLImage(number);
 
-  const response = await axios({
+  const { data } = await axios({
     url,
     method: 'GET',
     responseType: 'stream',
   });
 
-  response.data.pipe(writer);
+  data.pipe(writer);
 
   return new Promise((resolve, reject) => {
     writer.on('finish', () => {
-      resolve();
+      resolve(`./images/${page}.jpg`);
       console.log(`✅ Done: Page ${page}`);
     });
     writer.on('error', () => {
@@ -35,12 +36,19 @@ async function downloadImage(number) {
       console.log(`❌ Error`);
     });
   });
-}
+};
 
 const run = async () => {
+  const pages = [];
+
   for (let i = START_PAGE; i < END_PAGE; i++) {
-    await downloadImage(i);
+    pages.push(await downloadImage(i));
   }
+
+  imgToPDF(pages, imgToPDF.sizes.A4).pipe(fs.createWriteStream(`${FILE_NAME}.pdf`));
+
+  const dir = './images';
+  fs.readdirSync(dir).forEach((f) => fs.rmSync(`${dir}/${f}`));
 };
 
 run();
