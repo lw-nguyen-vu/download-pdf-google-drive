@@ -3,12 +3,13 @@ const path = require('path');
 const axios = require('axios');
 const imgToPDF = require('image-to-pdf');
 
-const FILE_NAME = 'CRYPTO DECADE';
+const FILE_NAME = 'PCCC&TAHK';
 const START_PAGE = 0;
-const END_PAGE = 143;
+const END_PAGE = 532;
+const COOKIE = '';
 
 const getURLImage = (page) => {
-  return `https://drive.google.com/viewer2/prod-03/img?ck=drive&ds=APznzaZnVVcaDA4bkRVuFvF4j1xw79ST5ak-xbtCIDENnDyuxgFtnv0ODiNvfvhn08A5el6rqFb28b9kF4OQT5YPnEmPUhgC9zHuE3hqIjCHHmOhZPHzPJvcnrWM1aFmGoZsDMSk2FMOMv3y6Srj4oE3y59qmwBAbkI8fdT74H76MmGYkGZRXM_yd8tC-VBapumi0_sJmO3zdWo9i0uOx--yeRd4_DzsY1gF5Giw2NcWw_U5zUX3H5BeOozZGJZtx9e4i9r1y3yOsZwokkmdd-13TAiSwLclgfz4rNnkXTkpilwz-ymSkUuIigV3IvN6q5vFpbX9ZpUitcKliBXwK1hOYs2KquV63MCl7dnBlvykgjQgd9kxkO8RFuc9kSYkyunKnYrxJO36&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
+  return `https://drive.google.com/viewer2/prod-01/img?ck=drive&ds=APznzaY1X8PRbtsCJdesneO5noZGlQQrceLOJvNiXxMvFTTxFXUUhelxyVVviURhtoBnLbooQneF-juZAf0ZevDjcGT2jC1BaEIJWoC7rRt0aWtkzrC40VqzDvfRxhYlH4dy7dSlIJLjs9kbRQ-dzmEO3qKdBfsmzKlRE1KWycD_skmORpbf9DHga-38_o8fQaXzXtzhagqHiN_-0-G2Eh0wBhFMWLOhwzHKWSfRIHqx3-o0neMrrrJWiXmssDqf_l5Zc4-c5yb6IoQ-fQR9jYn9r9OTBIjYWHx4VYE7pwqd_4P-jd5Wddz8DBXpuFShGsfFm8Cu50_g6dxPTQ67TYVw6KtwftvJ1fs_OGo7mXG4Qh1eN6qGM3WIOg6OF_hCFmrnht5tvvRZyaeGWoj0t4zPXDBcUXMPcQ%3D%3D&authuser=0&page=${page}&skiphighlight=true&w=1600&webp=true`;
 };
 
 const downloadImage = async (number) => {
@@ -19,6 +20,7 @@ const downloadImage = async (number) => {
   const url = getURLImage(number);
 
   const { data } = await axios({
+    headers: { cookie: COOKIE },
     url,
     method: 'GET',
     responseType: 'stream',
